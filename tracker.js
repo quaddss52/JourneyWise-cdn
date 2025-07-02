@@ -34,7 +34,7 @@
     VIDEO_WATCH_PERCENTAGE: "video_watch_percentage",
     DOWNLOAD: "download",
   });
-  function h() {
+  function p() {
     if (!a("jw_user_id")) {
       const n = u();
       w("jw_user_id", n, 31536e3);
@@ -52,7 +52,7 @@
       o = window.JourneyWiseConsentGiven === !1;
     return !t && !e && !o;
   }
-  function p() {
+  function E() {
     let t = localStorage.getItem("jw_device_id");
     return (
       t || ((t = crypto.randomUUID()), localStorage.setItem("jw_device_id", t)),
@@ -68,7 +68,7 @@
       return;
     }
     const o = (e == null ? void 0 : e.visitor_id) || a("jw_user_id"),
-      n = (e == null ? void 0 : e.visitor_id) || p(),
+      n = (e == null ? void 0 : e.visitor_id) || E(),
       i = {
         identifier: t,
         pageview_id: 409606162,
@@ -100,7 +100,7 @@
     return e;
   }
   let _ = Date.now();
-  const y = initCookies();
+  const y = p();
   function f() {
     s(c.PAGE_VIEW, {
       url: location.href,
@@ -109,8 +109,8 @@
       timestamp: Date.now(),
     }),
       y && S(),
-      O(),
       k(),
+      O(),
       g();
   }
   function S() {
@@ -137,7 +137,7 @@
         (_ = Date.now());
     });
   }
-  function k() {
+  function O() {
     setInterval(() => {
       const t = Date.now(),
         e = Math.floor((t - _) / 1e3);
@@ -149,7 +149,7 @@
       });
     }, 3e4);
   }
-  function O() {
+  function k() {
     setInterval(() => {
       const e = Date.now();
       e - _ >= 5 * 60 * 1e3 &&
@@ -248,7 +248,7 @@
         });
     });
   }
-  function C() {
+  function L() {
     const t = new Set(),
       e = () => {
         document.querySelectorAll("video").forEach((n) => {
@@ -288,31 +288,31 @@
     }),
       e();
   }
-  function L(t, e = {}) {
+  function C(t, e = {}) {
     const o = {
       ...e,
       url: location.href,
       timestamp: Date.now(),
       visitor_id: a("jw_user_id"),
       session_id: a("jw_session_id"),
-      device_identifier: p(),
+      device_identifier: E(),
     };
     s(t, o);
   }
-  function E(t, ...e) {
+  function h(t, ...e) {
     switch (t) {
       case "init":
         window.__JW_API_KEY__ = e[0];
         break;
       case "track":
-        L(...e);
+        C(...e);
         break;
       default:
         console.warn(`Unknown JourneyWise command: ${t}`);
     }
   }
   function N(t) {
-    t.forEach((e) => E(...e));
+    t.forEach((e) => h(...e));
   }
   function P() {
     const t = history.pushState;
@@ -325,14 +325,14 @@
     var o;
     const e = ((o = window.JourneyWise) == null ? void 0 : o.q) || [];
     (window.JourneyWise = function (...n) {
-      E(...n);
+      h(...n);
     }),
       (window.JourneyWise.q = e),
       N(e),
-      h(),
+      p(),
       f(),
       T(),
-      C(),
+      L(),
       b(),
       A(),
       P();
