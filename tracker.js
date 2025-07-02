@@ -1,8 +1,8 @@
-(function (l) {
-  typeof define == "function" && define.amd ? define(l) : l();
+(function (u) {
+  typeof define == "function" && define.amd ? define(u) : u();
 })(function () {
   "use strict";
-  function l() {
+  function u() {
     return crypto.randomUUID
       ? crypto.randomUUID()
       : Math.random().toString(36).substr(2, 10);
@@ -36,19 +36,21 @@
   });
   function h() {
     if (!a("jw_user_id")) {
-      const n = l();
-      w("jw_user_id", n, 31536e3),
-        console.log("[JourneyWise] Visitor ID set:", n);
+      const n = u();
+      w("jw_user_id", n, 31536e3);
     }
-    const o = l();
-    w("jw_session_id", o, 1800),
-      console.log("[JourneyWise] Session ID set:", o);
+    if (!a("jw_session_id")) {
+      const n = u();
+      return w("jw_session_id", n, 1800), !0;
+    }
+    return !1;
   }
   function v() {
-    if (typeof document > "u") return !1;
-    const t = navigator.doNotTrack === "1",
-      e = document.cookie.includes("jw_opt_out=true");
-    return !t && !e;
+    if (typeof window > "u" || typeof document > "u") return !1;
+    const t = typeof navigator < "u" && navigator.doNotTrack === "1",
+      e = document.cookie.includes("jw_opt_out=true"),
+      o = window.JourneyWiseConsentGiven === !1;
+    return !t && !e && !o;
   }
   function p() {
     let t = localStorage.getItem("jw_device_id");
@@ -79,16 +81,14 @@
         device_identifier: n,
         apiKey: window.__JW_API_KEY__ || "",
       };
-    console.log(i),
-      console.log("second"),
-      fetch(I, {
-        method: "POST",
-        credentials: "omit",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(i),
-      }).catch((r) => {
-        console.warn("Failed to send JourneyWise event:", r);
-      });
+    fetch(I, {
+      method: "POST",
+      credentials: "omit",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(i),
+    }).catch((r) => {
+      console.warn("Failed to send JourneyWise event:", r);
+    });
   }
   function D(t) {
     const e = {};
@@ -100,6 +100,7 @@
     return e;
   }
   let _ = Date.now();
+  const y = initCookies();
   function f() {
     s(c.PAGE_VIEW, {
       url: location.href,
@@ -107,12 +108,12 @@
       user_agent: navigator.userAgent,
       timestamp: Date.now(),
     }),
-      y(),
+      y && S(),
       O(),
-      S(),
+      k(),
       g();
   }
-  function y() {
+  function S() {
     const t = a("jw_session_id");
     s(c.SESSION_START, { session_id: t, timestamp: Date.now() });
   }
@@ -136,7 +137,7 @@
         (_ = Date.now());
     });
   }
-  function S() {
+  function k() {
     setInterval(() => {
       const t = Date.now(),
         e = Math.floor((t - _) / 1e3);
@@ -155,7 +156,7 @@
         s(c.SESSION_END, { session_id: a("jw_session_id"), timestamp: e });
     }, 6e4);
   }
-  function k() {
+  function T() {
     document.addEventListener("click", (t) => {
       const e = t.target.closest("a, button");
       if (!e) return;
@@ -175,7 +176,7 @@
         : s(c.CLICK, n);
     });
   }
-  function T() {
+  function A() {
     const t = () => {
       document.querySelectorAll("form").forEach((o) => {
         const n = o.id || o.name || "unnamed_form";
@@ -215,7 +216,7 @@
     }),
       t();
   }
-  function A() {
+  function b() {
     const t = [
       "pdf",
       "zip",
@@ -247,7 +248,7 @@
         });
     });
   }
-  function b() {
+  function C() {
     const t = new Set(),
       e = () => {
         document.querySelectorAll("video").forEach((n) => {
@@ -268,13 +269,13 @@
             }),
             n.addEventListener("timeupdate", () => {
               const m = Math.floor((n.currentTime / n.duration) * 100);
-              r.forEach((u) => {
-                m >= u &&
-                  !d.has(u) &&
-                  (d.add(u),
+              r.forEach((l) => {
+                m >= l &&
+                  !d.has(l) &&
+                  (d.add(l),
                   s(c.VIDEO_WATCH_PERCENTAGE, {
                     video_id: i,
-                    percent_watched: u,
+                    percent_watched: l,
                     timestamp: Date.now(),
                   }));
               });
@@ -301,8 +302,7 @@
   function E(t, ...e) {
     switch (t) {
       case "init":
-        console.log("JourneyWise initialized with:", e[0]),
-          (window.__JW_API_KEY__ = e[0]);
+        window.__JW_API_KEY__ = e[0];
         break;
       case "track":
         L(...e);
@@ -311,10 +311,10 @@
         console.warn(`Unknown JourneyWise command: ${t}`);
     }
   }
-  function C(t) {
+  function N(t) {
     t.forEach((e) => E(...e));
   }
-  function N() {
+  function P() {
     const t = history.pushState;
     (history.pushState = function (...e) {
       t.apply(history, e), f();
@@ -328,13 +328,13 @@
       E(...n);
     }),
       (window.JourneyWise.q = e),
-      C(e),
+      N(e),
       h(),
       f(),
-      k(),
+      T(),
+      C(),
       b(),
       A(),
-      T(),
-      N();
+      P();
   })();
 });
