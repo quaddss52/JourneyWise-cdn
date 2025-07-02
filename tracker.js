@@ -45,14 +45,14 @@
     }
     return !1;
   }
-  function v() {
+  function E() {
     if (typeof window > "u" || typeof document > "u") return !1;
     const t = typeof navigator < "u" && navigator.doNotTrack === "1",
       e = document.cookie.includes("jw_opt_out=true"),
       o = window.JourneyWiseConsentGiven === !1;
     return !t && !e && !o;
   }
-  function E() {
+  function h() {
     let t = localStorage.getItem("jw_device_id");
     return (
       t || ((t = crypto.randomUUID()), localStorage.setItem("jw_device_id", t)),
@@ -61,14 +61,14 @@
   }
   const I = "https://flight.journeywise.io/api/v1/website-event-tracking";
   function s(t, e) {
-    if (!v() || window.JourneyWiseConsentGiven === !1) {
+    if (!E() || window.JourneyWiseConsentGiven === !1) {
       console.warn(
         "[JourneyWise] Tracking skipped: user opted out or DNT enabled."
       );
       return;
     }
     const o = (e == null ? void 0 : e.visitor_id) || a("jw_user_id"),
-      n = (e == null ? void 0 : e.visitor_id) || E(),
+      n = (e == null ? void 0 : e.visitor_id) || h(),
       i = {
         identifier: t,
         pageview_id: 409606162,
@@ -100,7 +100,7 @@
     return e;
   }
   let _ = Date.now();
-  const y = p();
+  const g = p();
   function f() {
     s(c.PAGE_VIEW, {
       url: location.href,
@@ -108,16 +108,30 @@
       user_agent: navigator.userAgent,
       timestamp: Date.now(),
     }),
-      y && S(),
+      g && S(),
+      A(),
       k(),
-      O(),
-      g();
+      y(),
+      O();
+  }
+  function y() {
+    const t = window.__JW_API_KEY__;
+    !t ||
+      !E() ||
+      s("test_connection", {
+        apiKey: t,
+        page_url: location.href,
+        hostname: location.hostname,
+        user_agent: navigator.userAgent,
+        referrer: document.referrer,
+        timestamp: Date.now(),
+      });
   }
   function S() {
     const t = a("jw_session_id");
     s(c.SESSION_START, { session_id: t, timestamp: Date.now() });
   }
-  function g() {
+  function O() {
     const t = [25, 50, 75, 100],
       e = new Set();
     window.addEventListener("scroll", () => {
@@ -137,7 +151,7 @@
         (_ = Date.now());
     });
   }
-  function O() {
+  function k() {
     setInterval(() => {
       const t = Date.now(),
         e = Math.floor((t - _) / 1e3);
@@ -149,7 +163,7 @@
       });
     }, 3e4);
   }
-  function k() {
+  function A() {
     setInterval(() => {
       const e = Date.now();
       e - _ >= 5 * 60 * 1e3 &&
@@ -176,7 +190,7 @@
         : s(c.CLICK, n);
     });
   }
-  function A() {
+  function b() {
     const t = () => {
       document.querySelectorAll("form").forEach((o) => {
         const n = o.id || o.name || "unnamed_form";
@@ -216,7 +230,7 @@
     }),
       t();
   }
-  function b() {
+  function C() {
     const t = [
       "pdf",
       "zip",
@@ -288,33 +302,33 @@
     }),
       e();
   }
-  function C(t, e = {}) {
+  function N(t, e = {}) {
     const o = {
       ...e,
       url: location.href,
       timestamp: Date.now(),
       visitor_id: a("jw_user_id"),
       session_id: a("jw_session_id"),
-      device_identifier: E(),
+      device_identifier: h(),
     };
     s(t, o);
   }
-  function h(t, ...e) {
+  function v(t, ...e) {
     switch (t) {
       case "init":
         window.__JW_API_KEY__ = e[0];
         break;
       case "track":
-        C(...e);
+        N(...e);
         break;
       default:
         console.warn(`Unknown JourneyWise command: ${t}`);
     }
   }
-  function N(t) {
-    t.forEach((e) => h(...e));
+  function P(t) {
+    t.forEach((e) => v(...e));
   }
-  function P() {
+  function U() {
     const t = history.pushState;
     (history.pushState = function (...e) {
       t.apply(history, e), f();
@@ -325,17 +339,13 @@
     var o;
     const e = ((o = window.JourneyWise) == null ? void 0 : o.q) || [];
     (window.JourneyWise = function (...n) {
-      h(...n);
+      v(...n);
     }),
       (window.JourneyWise.q = e),
-      N(e),
+      P(e),
       p(),
-      f(),
-      T(),
-      L(),
-      b(),
-      A(),
-      P(),
-      console.log("init");
+      setTimeout(() => {
+        f(), T(), L(), C(), b(), U();
+      }, 1e3);
   })();
 });
