@@ -11,6 +11,7 @@
     document.cookie = `${t}=${e}; path=/; max-age=${o}`;
   }
   function a(t) {
+    if (typeof document > "u") return null;
     const o = document.cookie
       .split("; ")
       .map((n) => n.trim())
@@ -44,6 +45,7 @@
       console.log("[JourneyWise] Session ID set:", o);
   }
   function v() {
+    if (typeof document > "u") return !1;
     const t = navigator.doNotTrack === "1",
       e = document.cookie.includes("jw_opt_out=true");
     return !t && !e;
@@ -98,23 +100,23 @@
     return e;
   }
   let _ = Date.now();
-  function m() {
+  function f() {
     s(c.PAGE_VIEW, {
       url: location.href,
       referrer: document.referrer,
       user_agent: navigator.userAgent,
       timestamp: Date.now(),
     }),
-      g(),
-      O(),
       y(),
-      S();
+      O(),
+      S(),
+      g();
   }
-  function g() {
+  function y() {
     const t = a("jw_session_id");
     s(c.SESSION_START, { session_id: t, timestamp: Date.now() });
   }
-  function S() {
+  function g() {
     const t = [25, 50, 75, 100],
       e = new Set();
     window.addEventListener("scroll", () => {
@@ -134,7 +136,7 @@
         (_ = Date.now());
     });
   }
-  function y() {
+  function S() {
     setInterval(() => {
       const t = Date.now(),
         e = Math.floor((t - _) / 1e3);
@@ -233,8 +235,8 @@
       const i = new URL(n, location.href),
         r = i.pathname.split(".").pop().toLowerCase(),
         d = o.hasAttribute("download"),
-        f = t.includes(r);
-      (d || f) &&
+        m = t.includes(r);
+      (d || m) &&
         s(c.DOWNLOAD, {
           file_name: i.pathname.split("/").pop(),
           file_url: i.href,
@@ -265,9 +267,9 @@
               });
             }),
             n.addEventListener("timeupdate", () => {
-              const f = Math.floor((n.currentTime / n.duration) * 100);
+              const m = Math.floor((n.currentTime / n.duration) * 100);
               r.forEach((u) => {
-                f >= u &&
+                m >= u &&
                   !d.has(u) &&
                   (d.add(u),
                   s(c.VIDEO_WATCH_PERCENTAGE, {
@@ -315,9 +317,9 @@
   function N() {
     const t = history.pushState;
     (history.pushState = function (...e) {
-      t.apply(history, e), m();
+      t.apply(history, e), f();
     }),
-      window.addEventListener("popstate", m);
+      window.addEventListener("popstate", f);
   }
   (function () {
     var o;
@@ -328,7 +330,7 @@
       (window.JourneyWise.q = e),
       C(e),
       h(),
-      m(),
+      f(),
       k(),
       b(),
       A(),
