@@ -1,8 +1,8 @@
-(function (u) {
-  typeof define == "function" && define.amd ? define(u) : u();
+(function (d) {
+  typeof define == "function" && define.amd ? define(d) : d();
 })(function () {
   "use strict";
-  function u() {
+  function d() {
     return crypto.randomUUID
       ? crypto.randomUUID()
       : Math.random().toString(36).substr(2, 10);
@@ -36,11 +36,11 @@
   });
   function p() {
     if (!a("jw_user_id")) {
-      const n = u();
+      const n = d();
       w("jw_user_id", n, 31536e3);
     }
     if (!a("jw_session_id")) {
-      const n = u();
+      const n = d();
       return w("jw_session_id", n, 1800), !0;
     }
     return !1;
@@ -54,10 +54,7 @@
   }
   function h() {
     let t = localStorage.getItem("jw_device_id");
-    return (
-      t || ((t = crypto.randomUUID()), localStorage.setItem("jw_device_id", t)),
-      t
-    );
+    return t || ((t = d()), localStorage.setItem("jw_device_id", t)), t;
   }
   const I = "https://flight.journeywise.io/api/v1/website-event-tracking";
   function s(t, e) {
@@ -211,12 +208,12 @@
           o.addEventListener("submit", (i) => {
             i.preventDefault();
             const r = new FormData(o),
-              d = D(r);
+              u = D(r);
             s(c.FORM_SUBMIT, {
               form_id: n,
               title: o.title || "Unnamed Form",
               status: "submitted",
-              fields: d,
+              fields: u,
               url: location.href,
               submit_url: o.action || null,
               timestamp: Date.now(),
@@ -249,9 +246,9 @@
       if (!n) return;
       const i = new URL(n, location.href),
         r = i.pathname.split(".").pop().toLowerCase(),
-        d = o.hasAttribute("download"),
+        u = o.hasAttribute("download"),
         m = t.includes(r);
-      (d || m) &&
+      (u || m) &&
         s(c.DOWNLOAD, {
           file_name: i.pathname.split("/").pop(),
           file_url: i.href,
@@ -270,7 +267,7 @@
           t.add(n);
           const i = n.id || "unnamed_video";
           let r = [25, 50, 75, 100],
-            d = new Set();
+            u = new Set();
           n.addEventListener("play", () => {
             s(c.VIDEO_PLAY, { video_id: i, timestamp: Date.now() });
           }),
@@ -285,8 +282,8 @@
               const m = Math.floor((n.currentTime / n.duration) * 100);
               r.forEach((l) => {
                 m >= l &&
-                  !d.has(l) &&
-                  (d.add(l),
+                  !u.has(l) &&
+                  (u.add(l),
                   s(c.VIDEO_WATCH_PERCENTAGE, {
                     video_id: i,
                     percent_watched: l,
@@ -328,7 +325,7 @@
   function P(t) {
     t.forEach((e) => v(...e));
   }
-  function U() {
+  function W() {
     const t = history.pushState;
     (history.pushState = function (...e) {
       t.apply(history, e), f();
@@ -345,7 +342,7 @@
       P(e),
       p(),
       setTimeout(() => {
-        f(), T(), L(), C(), b(), U();
+        f(), T(), L(), C(), b(), W();
       }, 1e3);
   })();
 });
