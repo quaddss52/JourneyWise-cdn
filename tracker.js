@@ -1,8 +1,8 @@
-(function (d) {
-  typeof define == "function" && define.amd ? define(d) : d();
+(function (u) {
+  typeof define == "function" && define.amd ? define(u) : u();
 })(function () {
   "use strict";
-  function d() {
+  function u() {
     return crypto.randomUUID
       ? crypto.randomUUID()
       : Math.random().toString(36).substr(2, 10);
@@ -10,7 +10,7 @@
   function w(t, e, o) {
     document.cookie = `${t}=${e}; path=/; max-age=${o}`;
   }
-  function u(t) {
+  function a(t) {
     if (typeof document > "u") return null;
     const o = document.cookie
       .split("; ")
@@ -35,12 +35,12 @@
     DOWNLOAD: "download",
   });
   function p() {
-    if (!u("jw_user_id")) {
-      const n = d();
+    if (!a("jw_user_id")) {
+      const n = u();
       w("jw_user_id", n, 31536e3);
     }
-    if (!u("jw_session_id")) {
-      const n = d();
+    if (!a("jw_session_id")) {
+      const n = u();
       return w("jw_session_id", n, 1800), !0;
     }
     return !1;
@@ -52,21 +52,21 @@
       o = window.JourneyWiseConsentGiven === !1;
     return !t && !e && !o;
   }
-  function h() {
+  function v() {
     let t = localStorage.getItem("jw_device_id");
-    return t || ((t = d()), localStorage.setItem("jw_device_id", t)), t;
+    return t || ((t = u()), localStorage.setItem("jw_device_id", t)), t;
   }
   const I = "https://flight.journeywise.io/api/v1/website-event-tracking";
   function s(t, e) {
-    var c, a, l;
+    var c, d, l;
     if (!E() || window.JourneyWiseConsentGiven === !1) {
       console.warn(
         "[JourneyWise] Tracking skipped: user opted out or DNT enabled."
       );
       return;
     }
-    const o = (e == null ? void 0 : e.visitor_id) || u("jw_user_id"),
-      n = (e == null ? void 0 : e.visitor_id) || h(),
+    const o = a("jw_user_id"),
+      n = a("jw_user_id"),
       i = {
         identifier: t,
         pageview_id: 409606162,
@@ -77,9 +77,9 @@
             ((c = e == null ? void 0 : e.fields) == null ? void 0 : c.email) ||
             void 0,
           firstName:
-            ((a = e == null ? void 0 : e.fields) == null
+            ((d = e == null ? void 0 : e.fields) == null
               ? void 0
-              : a.firstName) || void 0,
+              : d.firstName) || void 0,
           lastName:
             ((l = e == null ? void 0 : e.fields) == null
               ? void 0
@@ -135,7 +135,7 @@
       });
   }
   function S() {
-    const t = u("jw_session_id");
+    const t = a("jw_session_id");
     s(r.SESSION_START, { session_id: t, timestamp: Date.now() });
   }
   function k() {
@@ -165,7 +165,7 @@
       s(r.TIME_ON_PAGE, {
         time_spent: e,
         url: location.href,
-        session_id: u("jw_session_id"),
+        session_id: a("jw_session_id"),
         timestamp: Date.now(),
       });
     }, 3e4);
@@ -174,7 +174,7 @@
     setInterval(() => {
       const e = Date.now();
       e - f >= 5 * 60 * 1e3 &&
-        s(r.SESSION_END, { session_id: u("jw_session_id"), timestamp: e });
+        s(r.SESSION_END, { session_id: a("jw_session_id"), timestamp: e });
     }, 6e4);
   }
   function T() {
@@ -218,12 +218,12 @@
           o.addEventListener("submit", (i) => {
             i.preventDefault();
             const c = new FormData(o),
-              a = g(c);
+              d = g(c);
             s(r.FORM_SUBMIT, {
               form_id: n,
               title: o.title || "Unnamed Form",
               status: "submitted",
-              fields: a,
+              fields: d,
               url: location.href,
               submit_url: o.action || null,
               timestamp: Date.now(),
@@ -256,9 +256,9 @@
       if (!n) return;
       const i = new URL(n, location.href),
         c = i.pathname.split(".").pop().toLowerCase(),
-        a = o.hasAttribute("download"),
+        d = o.hasAttribute("download"),
         l = t.includes(c);
-      (a || l) &&
+      (d || l) &&
         s(r.DOWNLOAD, {
           file_name: i.pathname.split("/").pop(),
           file_url: i.href,
@@ -277,7 +277,7 @@
           t.add(n);
           const i = n.id || "unnamed_video";
           let c = [25, 50, 75, 100],
-            a = new Set();
+            d = new Set();
           n.addEventListener("play", () => {
             s(r.VIDEO_PLAY, { video_id: i, timestamp: Date.now() });
           }),
@@ -292,8 +292,8 @@
               const l = Math.floor((n.currentTime / n.duration) * 100);
               c.forEach((_) => {
                 l >= _ &&
-                  !a.has(_) &&
-                  (a.add(_),
+                  !d.has(_) &&
+                  (d.add(_),
                   s(r.VIDEO_WATCH_PERCENTAGE, {
                     video_id: i,
                     percent_watched: _,
@@ -314,13 +314,13 @@
       ...e,
       url: location.href,
       timestamp: Date.now(),
-      visitor_id: u("jw_user_id"),
-      session_id: u("jw_session_id"),
-      device_identifier: h(),
+      visitor_id: a("jw_user_id"),
+      session_id: a("jw_session_id"),
+      device_identifier: v(),
     };
     s(t, o);
   }
-  function v(t, ...e) {
+  function h(t, ...e) {
     switch (t) {
       case "init":
         window.__JW_API_KEY__ = e[0];
@@ -333,7 +333,7 @@
     }
   }
   function P(t) {
-    t.forEach((e) => v(...e));
+    t.forEach((e) => h(...e));
   }
   function W() {
     const t = history.pushState;
@@ -346,7 +346,7 @@
     var o;
     const e = ((o = window.JourneyWise) == null ? void 0 : o.q) || [];
     (window.JourneyWise = function (...n) {
-      v(...n);
+      h(...n);
     }),
       (window.JourneyWise.q = e),
       P(e),
