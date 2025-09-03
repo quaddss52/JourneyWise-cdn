@@ -7,7 +7,7 @@
       ? crypto.randomUUID()
       : Math.random().toString(36).substr(2, 10);
   }
-  function h(n, e, o) {
+  function g(n, e, o) {
     document.cookie = `${n}=${e}; path=/; max-age=${o}`;
   }
   function u(n) {
@@ -34,14 +34,14 @@
     VIDEO_WATCH_PERCENTAGE: "video_watch_percentage",
     DOWNLOAD: "download",
   });
-  function g() {
+  function h() {
     if (!u("jw_user_id")) {
       const t = f();
-      h("jw_user_id", t, 31536e3);
+      g("jw_user_id", t, 31536e3);
     }
     if (!u("jw_session_id")) {
       const t = f();
-      return h("jw_session_id", t, 1800), !0;
+      return g("jw_session_id", t, 1800), !0;
     }
     return !1;
   }
@@ -60,7 +60,7 @@
     const n = sessionStorage.getItem("jw_campaign_origin");
     if (n) return n;
     const e = new URLSearchParams(window.location.search);
-    console.log(e);
+    console.log(e), console.log(document.referrer, "referrer");
     const o = [
       "utm_source",
       "utm_campaign",
@@ -143,7 +143,7 @@
     return e;
   }
   let m = Date.now();
-  const O = g();
+  const O = h();
   function w() {
     r(a.PAGE_VIEW, {
       url: location.href,
@@ -368,7 +368,7 @@
     }),
       (window.JourneyWise.q = e),
       U(e),
-      g(),
+      h(),
       setTimeout(() => {
         w(), v(), j(), C(), P(), R();
       }, 1e3);
