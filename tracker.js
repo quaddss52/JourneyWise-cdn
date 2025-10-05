@@ -1,24 +1,24 @@
-(function (_) {
-  typeof define == "function" && define.amd ? define(_) : _();
+(function (l) {
+  typeof define == "function" && define.amd ? define(l) : l();
 })(function () {
   "use strict";
-  function _() {
+  function l() {
     return crypto.randomUUID
       ? crypto.randomUUID()
       : Math.random().toString(36).substr(2, 10);
   }
-  function h(n, e, t) {
-    document.cookie = `${n}=${e}; path=/; max-age=${t}`;
+  function m(t, e, o) {
+    document.cookie = `${t}=${e}; path=/; max-age=${o}`;
   }
-  function a(n) {
+  function d(t) {
     if (typeof document > "u") return null;
-    const t = document.cookie
+    const o = document.cookie
       .split("; ")
-      .map((o) => o.trim())
-      .find((o) => o.startsWith(`${n}=`));
-    return t ? t.split("=")[1] : null;
+      .map((n) => n.trim())
+      .find((n) => n.startsWith(`${t}=`));
+    return o ? o.split("=")[1] : null;
   }
-  const u = Object.freeze({
+  const c = Object.freeze({
     PAGE_VIEW: "pageview",
     SESSION_START: "session_start",
     SESSION_END: "session_end",
@@ -34,135 +34,99 @@
     VIDEO_WATCH_PERCENTAGE: "video_watch_percentage",
     DOWNLOAD: "download",
   });
-  function E() {
-    if (!a("jw_user_id")) {
-      const o = _();
-      h("jw_user_id", o, 31536e3);
+  function w() {
+    if (!d("jw_user_id")) {
+      const n = l();
+      m("jw_user_id", n, 31536e3);
     }
-    if (!a("jw_session_id")) {
-      const o = _();
-      return h("jw_session_id", o, 1800), !0;
+    if (!d("jw_session_id")) {
+      const n = l();
+      return m("jw_session_id", n, 1800), !0;
     }
     return !1;
   }
-  function y() {
+  function p() {
     if (typeof window > "u" || typeof document > "u") return !1;
-    const n = typeof navigator < "u" && navigator.doNotTrack === "1",
+    const t = typeof navigator < "u" && navigator.doNotTrack === "1",
       e = document.cookie.includes("jw_opt_out=true"),
-      t = window.JourneyWiseConsentGiven === !1;
-    return !n && !e && !t;
-  }
-  function D() {
-    let n = localStorage.getItem("jw_device_id");
-    return n || ((n = _()), localStorage.setItem("jw_device_id", n)), n;
+      o = window.JourneyWiseConsentGiven === !1;
+    return !t && !e && !o;
   }
   function S() {
-    const n = JSON.parse(sessionStorage.getItem("jw_campaign_origin"));
-    if (n) return n;
-    const e = new URLSearchParams(window.location.search),
-      t = {
-        utm_source: e.get("utm_source") || null,
-        utm_medium: e.get("utm_medium") || null,
-        utm_campaign: e.get("utm_campaign") || null,
-        utm_term: e.get("utm_term") || null,
-        utm_content: e.get("utm_content") || null,
-      };
-    return sessionStorage.setItem("jw_campaign_origin", JSON.stringify(t)), t;
+    let t = localStorage.getItem("jw_device_id");
+    return t || ((t = l()), localStorage.setItem("jw_device_id", t)), t;
   }
-  const O = "https://api.journeywise.io/api/v1/website-event-tracking";
-  function r(n, e) {
-    var d, c, l, f, p, m, I, k;
-    if (!y() || window.JourneyWiseConsentGiven === !1) {
+  const g = "https://flight.journeywise.io/api/v1/website-event-tracking";
+  function s(t, e) {
+    var r, a, u;
+    if (!p() || window.JourneyWiseConsentGiven === !1) {
       console.warn(
         "[JourneyWise] Tracking skipped: user opted out or DNT enabled."
       );
       return;
     }
-    const t = a("jw_user_id"),
-      o = a("jw_user_id"),
-      i = S(),
-      s = {
-        identifier: n,
+    const o = d("jw_user_id"),
+      n = d("jw_user_id"),
+      i = {
+        identifier: t,
         pageview_id: 409606162,
         platform: "web",
-        utm_tracking: i,
         user_data: {
-          anonymous_id: t,
+          anonymous_id: o,
           workEmail:
-            ((d = e == null ? void 0 : e.fields) == null
-              ? void 0
-              : d.workEmail) || void 0,
+            ((r = e == null ? void 0 : e.fields) == null ? void 0 : r.email) ||
+            void 0,
           firstName:
-            ((c = e == null ? void 0 : e.fields) == null
+            ((a = e == null ? void 0 : e.fields) == null
               ? void 0
-              : c.firstName) || void 0,
+              : a.firstName) || void 0,
           lastName:
-            ((l = e == null ? void 0 : e.fields) == null
+            ((u = e == null ? void 0 : e.fields) == null
               ? void 0
-              : l.lastName) || void 0,
-          phone:
-            ((f = e == null ? void 0 : e.fields) == null
-              ? void 0
-              : f.phoneNumber) || void 0,
-          companyName:
-            ((p = e == null ? void 0 : e.fields) == null
-              ? void 0
-              : p.companyName) || void 0,
-          companySize:
-            ((m = e == null ? void 0 : e.fields) == null
-              ? void 0
-              : m.companySize) || void 0,
-          jobTitle:
-            ((I = e == null ? void 0 : e.fields) == null
-              ? void 0
-              : I.jobTitle) || void 0,
-          country:
-            ((k = e == null ? void 0 : e.fields) == null
-              ? void 0
-              : k.country) || void 0,
+              : u.lastName) || void 0,
         },
         event: "Website Activity",
-        subEvent: n,
-        metadata: { additional_data: { ...e } },
+        subEvent: t,
+        metadata: { additional_data: e },
         referer: e != null && e.url ? e.url : document.referrer,
-        device_identifier: o,
+        device_identifier: n,
         apiKey: window.__JW_API_KEY__ || "",
       };
-    fetch(O, {
+    fetch(g, {
       method: "POST",
       credentials: "omit",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(s),
-    }).catch((J) => {
-      console.warn("Failed to send JourneyWise event:", J);
+      body: JSON.stringify(i),
+    }).catch((f) => {
+      console.warn("Failed to send JourneyWise event:", f);
     });
   }
-  function b(n) {
+  function v(t) {
     const e = {};
-    for (const [t, o] of n.entries()) t.toLowerCase(), (e[t] = o);
+    for (const [o, n] of t.entries()) o.toLowerCase(), (e[o] = n);
     return e;
   }
-  let w = Date.now();
-  const T = E();
-  function g() {
-    r(u.PAGE_VIEW, {
+  let E = Date.now();
+  const y = w();
+  function _() {
+    s(c.PAGE_VIEW, {
       url: location.href,
       referrer: document.referrer,
       user_agent: navigator.userAgent,
       timestamp: Date.now(),
     }),
-      T && N(),
-      j(),
-      P(),
+      y && D(),
       A(),
-      L();
+      k(),
+      I(),
+      O();
   }
-  function A() {
-    const n = window.__JW_API_KEY__;
-    !n ||
-      !y() ||
-      r("test_connection", {
-        apiKey: n,
+  function I() {
+    const t = window.__JW_API_KEY__;
+    !t ||
+      !p() ||
+      s("test_connection", {
+        apiKey: t,
         page_url: location.href,
         hostname: location.hostname,
         user_agent: navigator.userAgent,
@@ -170,93 +134,118 @@
         timestamp: Date.now(),
       });
   }
-  function N() {
-    const n = a("jw_session_id");
-    r(u.SESSION_START, { session_id: n, timestamp: Date.now() });
+  function D() {
+    const t = d("jw_session_id");
+    s(c.SESSION_START, { session_id: t, timestamp: Date.now() });
   }
-  function L() {
-    const n = [25, 50, 75, 100],
+  function O() {
+    const t = [25, 50, 75, 100],
       e = new Set();
     window.addEventListener("scroll", () => {
-      const t = window.scrollY,
-        o = document.documentElement.scrollHeight - window.innerHeight,
-        i = Math.round((t / o) * 100);
-      n.forEach((s) => {
-        i >= s &&
-          !e.has(s) &&
-          (e.add(s),
-          r(u.SCROLL_DEPTH, {
-            percent: s,
+      const o = window.scrollY,
+        n = document.documentElement.scrollHeight - window.innerHeight,
+        i = Math.round((o / n) * 100);
+      t.forEach((r) => {
+        i >= r &&
+          !e.has(r) &&
+          (e.add(r),
+          s(c.SCROLL_DEPTH, {
+            percent: r,
             url: location.href,
             timestamp: Date.now(),
           }));
       }),
-        (w = Date.now());
+        (E = Date.now());
     });
   }
-  function P() {
-    setInterval(() => {
-      const n = Date.now(),
-        e = Math.floor((n - w) / 1e3);
-      r(u.TIME_ON_PAGE, {
-        time_spent: e,
-        url: location.href,
-        session_id: a("jw_session_id"),
-        timestamp: Date.now(),
-      });
-    }, 3e4);
+  function k({ delayMs: t = 5e4, pageStartTs: e } = {}) {
+    const o = typeof e == "number" ? e : performance.timeOrigin || Date.now(),
+      n = "sessionTimeSent";
+    setTimeout(() => {
+      const i = Date.now(),
+        r = Math.floor((i - o) / 1e3),
+        a = new Date().toISOString().slice(0, 10);
+      localStorage.getItem(n) !== a &&
+        (typeof s == "function" &&
+          typeof c < "u" &&
+          s(c.TIME_ON_PAGE, {
+            time_spent: r,
+            url: location.href,
+            session_id: typeof d == "function" ? d("jw_session_id") : void 0,
+            timestamp: i,
+          }),
+        localStorage.setItem(n, a));
+    }, t);
   }
-  function j() {
+  function A() {
     setInterval(() => {
       const e = Date.now();
-      e - w >= 5 * 60 * 1e3 &&
-        r(u.SESSION_END, { session_id: a("jw_session_id"), timestamp: e });
+      e - E >= 5 * 60 * 1e3 &&
+        s(c.SESSION_END, { session_id: d("jw_session_id"), timestamp: e });
     }, 6e4);
   }
-  function C() {
-    const n = new WeakSet(),
-      e = (i) => {
-        if (n.has(i)) return;
-        n.add(i);
-        const s = i.id || i.name || "unnamed_form";
-        i.addEventListener("submit", (d) => {
-          var m;
-          const c = d.submitter;
-          if (
-            !(
-              c &&
-              (c.formNoValidate ||
-                ((m = c.hasAttribute) == null
-                  ? void 0
-                  : m.call(c, "formnovalidate")))
-            ) &&
-            !i.checkValidity()
-          )
-            return;
-          const f = new FormData(i),
-            p = b(f);
-          r(u.FORM_SUBMIT, {
-            form_id: s,
-            title: i.title || "Unnamed Form",
-            status: "submitted",
-            fields: p,
-            url: location.href,
-            submit_url: i.action || null,
-            timestamp: Date.now(),
-          });
-        });
-      },
-      t = () => {
-        document.querySelectorAll("form").forEach(e);
-      };
-    t(),
-      new MutationObserver(t).observe(document.body, {
-        childList: !0,
-        subtree: !0,
-      });
+  function T() {
+    document.addEventListener("click", (t) => {
+      const e = t.target.closest("a, button");
+      if (!e) return;
+      const o = e.tagName === "A" && !e.href.includes(location.hostname),
+        n = {
+          element_type: e.tagName,
+          text: e.textContent.trim(),
+          id: e.id || null,
+          class: e.className || null,
+          url: location.href,
+          timestamp: Date.now(),
+        };
+      o
+        ? ((n.link_url = e.href),
+          (n.domain = new URL(e.href).hostname),
+          s(c.OUTBOUND_LINK_CLICK, n))
+        : s(c.CLICK, n);
+    });
   }
-  function W() {
-    const n = [
+  function b() {
+    const t = () => {
+      document.querySelectorAll("form").forEach((o) => {
+        const n = o.id || o.name || "unnamed_form";
+        s(c.FORM_VIEW, {
+          form_id: n,
+          url: location.href,
+          timestamp: Date.now(),
+        }),
+          o.querySelectorAll("input, textarea, select").forEach((i) => {
+            i.addEventListener("focus", () => {
+              s(c.FORM_FOCUS, {
+                form_id: n,
+                input_name: i.name || i.id || "unknown_input",
+                url: location.href,
+              });
+            });
+          }),
+          o.addEventListener("submit", (i) => {
+            i.preventDefault();
+            const r = new FormData(o),
+              a = v(r);
+            s(c.FORM_SUBMIT, {
+              form_id: n,
+              title: o.title || "Unnamed Form",
+              status: "submitted",
+              fields: a,
+              url: location.href,
+              submit_url: o.action || null,
+              timestamp: Date.now(),
+            });
+          });
+      });
+    };
+    new MutationObserver(t).observe(document.body, {
+      childList: !0,
+      subtree: !0,
+    }),
+      t();
+  }
+  function L() {
+    const t = [
       "pdf",
       "zip",
       "png",
@@ -268,53 +257,53 @@
       "xlsx",
     ];
     document.addEventListener("click", (e) => {
-      const t = e.target.closest("a");
-      if (!t) return;
-      const o = t.getAttribute("href");
+      const o = e.target.closest("a");
       if (!o) return;
-      const i = new URL(o, location.href),
-        s = i.pathname.split(".").pop().toLowerCase(),
-        d = t.hasAttribute("download"),
-        c = n.includes(s);
-      (d || c) &&
-        r(u.DOWNLOAD, {
+      const n = o.getAttribute("href");
+      if (!n) return;
+      const i = new URL(n, location.href),
+        r = i.pathname.split(".").pop().toLowerCase(),
+        a = o.hasAttribute("download"),
+        u = t.includes(r);
+      (a || u) &&
+        s(c.DOWNLOAD, {
           file_name: i.pathname.split("/").pop(),
           file_url: i.href,
-          file_extension: s,
+          file_extension: r,
           element_type: "A",
           page_url: location.href,
           timestamp: Date.now(),
         });
     });
   }
-  function R() {
-    const n = new Set(),
+  function N() {
+    const t = new Set(),
       e = () => {
-        document.querySelectorAll("video").forEach((o) => {
-          if (n.has(o)) return;
-          n.add(o);
-          const i = o.id || "unnamed_video";
-          let s = [25, 50, 75, 100],
-            d = new Set();
-          o.addEventListener("play", () => {
-            r(u.VIDEO_PLAY, { video_id: i, timestamp: Date.now() });
+        document.querySelectorAll("video").forEach((n) => {
+          if (t.has(n)) return;
+          t.add(n);
+          const i = n.id || "unnamed_video";
+          let r = [25, 50, 75, 100],
+            a = new Set();
+          n.addEventListener("play", () => {
+            s(c.VIDEO_PLAY, { video_id: i, timestamp: Date.now() });
           }),
-            o.addEventListener("pause", () => {
-              r(u.VIDEO_PAUSE, {
+            n.addEventListener("pause", () => {
+              s(c.VIDEO_PAUSE, {
                 video_id: i,
-                current_time: o.currentTime,
+                current_time: n.currentTime,
                 timestamp: Date.now(),
               });
             }),
-            o.addEventListener("timeupdate", () => {
-              const c = Math.floor((o.currentTime / o.duration) * 100);
-              s.forEach((l) => {
-                c >= l &&
-                  !d.has(l) &&
-                  (d.add(l),
-                  r(u.VIDEO_WATCH_PERCENTAGE, {
+            n.addEventListener("timeupdate", () => {
+              const u = Math.floor((n.currentTime / n.duration) * 100);
+              r.forEach((f) => {
+                u >= f &&
+                  !a.has(f) &&
+                  (a.add(f),
+                  s(c.VIDEO_WATCH_PERCENTAGE, {
                     video_id: i,
-                    percent_watched: l,
+                    percent_watched: f,
                     timestamp: Date.now(),
                   }));
               });
@@ -327,50 +316,50 @@
     }),
       e();
   }
-  function M(n, e = {}) {
-    const t = {
+  function C(t, e = {}) {
+    const o = {
       ...e,
       url: location.href,
       timestamp: Date.now(),
-      visitor_id: a("jw_user_id"),
-      session_id: a("jw_session_id"),
-      device_identifier: D(),
+      visitor_id: d("jw_user_id"),
+      session_id: d("jw_session_id"),
+      device_identifier: S(),
     };
-    r(n, t);
+    s(t, o);
   }
-  function v(n, ...e) {
-    switch (n) {
+  function h(t, ...e) {
+    switch (t) {
       case "init":
         window.__JW_API_KEY__ = e[0];
         break;
       case "track":
-        M(...e);
+        C(...e);
         break;
       default:
-        console.warn(`Unknown JourneyWise command: ${n}`);
+        console.warn(`Unknown JourneyWise command: ${t}`);
     }
   }
-  function U(n) {
-    n.forEach((e) => v(...e));
+  function P(t) {
+    t.forEach((e) => h(...e));
   }
-  function V() {
-    const n = history.pushState;
+  function W() {
+    const t = history.pushState;
     (history.pushState = function (...e) {
-      n.apply(history, e), g();
+      t.apply(history, e), _();
     }),
-      window.addEventListener("popstate", g);
+      window.addEventListener("popstate", _);
   }
   (function () {
-    var t;
-    const e = ((t = window.JourneyWise) == null ? void 0 : t.q) || [];
-    (window.JourneyWise = function (...o) {
-      v(...o);
+    var o;
+    const e = ((o = window.JourneyWise) == null ? void 0 : o.q) || [];
+    (window.JourneyWise = function (...n) {
+      h(...n);
     }),
       (window.JourneyWise.q = e),
-      U(e),
-      E(),
+      P(e),
+      w(),
       setTimeout(() => {
-        g(), S(), R(), W(), C(), V();
+        _(), T(), N(), L(), b(), W();
       }, 1e3);
   })();
 });
