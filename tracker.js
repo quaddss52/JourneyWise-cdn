@@ -56,7 +56,7 @@
     let t = localStorage.getItem("jw_device_id");
     return t || ((t = l()), localStorage.setItem("jw_device_id", t)), t;
   }
-  const g = "https://flight.journeywise.io/api/v1/website-event-tracking";
+  const g = "https://api.journeywise.io/api/v1/website-event-tracking";
   function s(t, e) {
     var r, a, u;
     if (!p() || window.JourneyWiseConsentGiven === !1) {
